@@ -1,9 +1,10 @@
 (ns bubble.core-test
   (:refer-clojure :exclude [pop])
   (:require [clojure.test :refer :all]
+            [clojure.set :as set]
             [bubble.core :refer :all]))
 
-(deftest t-blow-bubbles
+(deftest t-blow-once
   (testing "creates ns accessible with bubble/through"
     (let [bubble (init)]
       (try
@@ -31,3 +32,21 @@
                        deref)))
       (pop bubble)
       (is (nil? (through bubble 'bubble.t/x))))))
+
+(deftest t-blow-more
+  (let [blow-once #(blow %1 [['(ns bubble.t)
+                              (list 'def 'x %2)]])]
+    (testing "remove old ns"
+      (let [bubble (init)
+            all (comp set all-ns)
+            before (all)
+            first-diff (atom ())]
+        (try
+          (blow-once bubble :x)
+          (reset! first-diff (set/difference (all) before))
+          (blow-once bubble :y)
+          (let [second-diff (set/difference (all) before)]
+            (is (= 1 (count second-diff)))
+            (is (not= @first-diff second-diff)))
+          (finally
+            (pop bubble)))))))

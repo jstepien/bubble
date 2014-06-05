@@ -4,7 +4,7 @@
 
 (defn init
   []
-  (atom {:postfix (gensym "bubble-")}))
+  (atom {}))
 
 (defn through
   "There's something not right with the world when you look at it

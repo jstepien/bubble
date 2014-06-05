@@ -21,18 +21,25 @@
   (map #(symbol (.replace (subs (str %) 2) (str \. postfix) ""))
        vars))
 
+(defn- remove-old-nss!
+  [nss]
+  (doseq [ns nss]
+    (remove-ns (symbol ns))))
+
 (defn blow
   "Blow a bubble. the ones which you blew before should be gone
   before you even notice."
   [bubble nss]
   (let [prev-ns *ns*
-        postfix (:postfix @bubble)
+        postfix (gensym "bubble-")
         mangled (mangle nss :postfix postfix)
         new-nss (names mangled)]
     (try
       (eval-nss! mangled)
       (let [vars (all-publics mangled)
-            var-map (zipmap (demangle-vars postfix vars) vars)]
-        (swap! bubble assoc :vars var-map :nss new-nss))
+            var-map (zipmap (demangle-vars postfix vars) vars)
+            old-nss (:nss @bubble)]
+        (swap! bubble assoc :vars var-map :nss new-nss)
+        (remove-old-nss! old-nss))
       (finally
         (in-ns (ns-name prev-ns))))))
