@@ -41,5 +41,8 @@
             old-nss (:nss @bubble)]
         (swap! bubble assoc :vars var-map :nss new-nss)
         (remove-old-nss! old-nss))
+      (catch Exception e
+        (remove-old-nss! new-nss)
+        (throw e))
       (finally
         (in-ns (ns-name prev-ns))))))

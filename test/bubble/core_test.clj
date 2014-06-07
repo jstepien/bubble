@@ -49,4 +49,18 @@
             (is (= 1 (count second-diff)))
             (is (not= @first-diff second-diff)))
           (finally
+            (pop bubble)))))
+    (testing "keep old nss if new code fails to compile"
+      (let [bubble (init)
+            all (comp set all-ns)
+            before (all)
+            first-diff (atom ())]
+        (try
+          (blow-once bubble :x)
+          (reset! first-diff (set/difference (all) before))
+          (is (thrown? clojure.lang.Compiler$CompilerException
+                       (blow-once bubble 'no-such-symbol)))
+          (is (= @first-diff (set/difference (all) before)))
+          (is (= :x @(through bubble 'bubble.t/x)))
+          (finally
             (pop bubble)))))))
