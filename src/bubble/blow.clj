@@ -29,7 +29,7 @@
 (defn blow
   "Blow a bubble. the ones which you blew before should be gone
   before you even notice."
-  [bubble nss]
+  [bubble nss & {:keys [before]}]
   (let [prev-ns *ns*
         postfix (gensym "bubble-")
         mangled (mangle nss :postfix postfix)
@@ -39,6 +39,8 @@
       (let [vars (all-publics mangled)
             var-map (zipmap (demangle-vars postfix vars) vars)
             old-nss (:nss @bubble)]
+        (if before
+          (before var-map))
         (swap! bubble assoc :vars var-map :nss new-nss)
         (remove-old-nss! old-nss))
       (catch Exception e

@@ -34,8 +34,12 @@
       (is (nil? (through bubble 'bubble.t/x))))))
 
 (deftest t-blow-more
-  (let [blow-once #(blow %1 [['(ns bubble.t)
-                              (list 'def 'x %2)]])]
+  (let [blow-once (fn [bubble value & args]
+                    (apply blow
+                           bubble
+                           [['(ns bubble.t)
+                             (list 'def 'x value)]]
+                           args))]
     (testing "remove old ns"
       (let [bubble (init)
             all (comp set all-ns)
@@ -48,6 +52,20 @@
           (let [second-diff (set/difference (all) before)]
             (is (= 1 (count second-diff)))
             (is (not= @first-diff second-diff)))
+          (finally
+            (pop bubble)))))
+    (testing "call before"
+      (let [bubble (init)
+            check (atom [])
+            before-fn (fn [new-through]
+                        (swap! check
+                               conj
+                               [(some-> (through bubble 'bubble.t/x) deref)
+                                (some-> (new-through 'bubble.t/x) deref)]))]
+        (try
+          (blow-once bubble :x :before before-fn)
+          (blow-once bubble :y :before before-fn)
+          (is (= [[nil :x] [:x :y]] @check))
           (finally
             (pop bubble)))))
     (testing "keep old nss if new code fails to compile"
