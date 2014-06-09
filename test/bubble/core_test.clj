@@ -68,6 +68,21 @@
           (is (= [[nil :x] [:x :y]] @check))
           (finally
             (pop bubble)))))
+    (testing "throw in before"
+      (let [bubble (init)
+            count-all (comp count all-ns)
+            before (count-all)]
+        (try
+          (blow-once bubble :x)
+          (is (= :x (deref (through bubble 'bubble.t/x))))
+          (is (= (inc before) (count-all)))
+          (is (thrown? Exception
+                       (blow-once bubble :y :before (fn [_]
+                                                      (throw (Exception.))))))
+          (is (= :x (deref (through bubble 'bubble.t/x))))
+          (is (= (inc before) (count-all)))
+          (finally
+            (pop bubble)))))
     (testing "keep old nss if new code fails to compile"
       (let [bubble (init)
             all (comp set all-ns)
