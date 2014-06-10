@@ -83,6 +83,21 @@
           (is (= (inc before) (count-all)))
           (finally
             (pop bubble)))))
+    (testing "call after"
+      (let [bubble (init)
+            check (atom [])
+            after-fn (fn [old-through]
+                       (swap! check
+                              conj
+                              [(some-> (through bubble 'bubble.t/x) deref)
+                               (some-> (old-through 'bubble.t/x) deref)]))]
+        (try
+          (blow-once bubble :x :after after-fn)
+          (is (= [] @check))
+          (blow-once bubble :y :after after-fn)
+          (is (= [[:y :x]] @check))
+          (finally
+            (pop bubble)))))
     (testing "keep old nss if new code fails to compile"
       (let [bubble (init)
             all (comp set all-ns)
