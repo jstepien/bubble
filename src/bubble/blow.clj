@@ -26,6 +26,13 @@
   (doseq [ns nss]
     (remove-ns (symbol ns))))
 
+(defn- maybe-call-after
+  [old-after old-vars]
+  (if old-after
+    (try
+      (old-after old-vars)
+      (catch Exception _))))
+
 (defn blow
   "Blow a bubble. the ones which you blew before should be gone
   before you even notice."
@@ -42,8 +49,7 @@
         (if before
           (before var-map))
         (swap! bubble assoc :vars var-map :nss new-nss :after after)
-        (if old-after
-          (old-after old-vars))
+        (maybe-call-after old-after old-vars)
         (remove-old-nss! old-nss))
       (catch Exception e
         (remove-old-nss! new-nss)

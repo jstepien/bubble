@@ -98,6 +98,16 @@
           (is (= [[:y :x]] @check))
           (finally
             (pop bubble)))))
+    (testing "throwing in after doesn't matter"
+      (let [bubble (init)
+            after-fn (fn [_]
+                       (throw (Exception. "Shouldn't matter!")))]
+        (try
+          (blow-once bubble :x :after after-fn)
+          (blow-once bubble :y)
+          (is (= :y @(through bubble 'bubble.t/x)))
+          (finally
+            (pop bubble)))))
     (testing "keep old nss if new code fails to compile"
       (let [bubble (init)
             all (comp set all-ns)
