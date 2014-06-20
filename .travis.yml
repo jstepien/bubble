@@ -1,6 +1,8 @@
 language: clojure
 lein: lein2
-script: lein2 do clean, test
+script:
+  - lein2 do clean, test
+  - cd lein-bubble && lein2 do clean, test
 jdk:
   - openjdk7
   - oraclejdk7
