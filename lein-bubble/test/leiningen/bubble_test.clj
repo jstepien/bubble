@@ -29,9 +29,22 @@
 (deftest blow-t
   (let [blown (atom nil)]
     (with-redefs [blow (partial reset! blown)]
-      (bubble {} "blow" "0" (str *nrepl-port*) "bubble-sym" "project.clj"))
-    (is (= (list 'bubble-sym
-                 (cons 'quote
-                       [[(read-string
-                           (str \[ (slurp "project.clj") \]))]]))
-          @blown))))
+      (testing "simple working case"
+        (bubble {} "blow" "0" (str *nrepl-port*) "bubble-sym" "project.clj")
+        (is (= (list 'bubble-sym
+                     (cons 'quote
+                           [[(read-string
+                               (str \[ (slurp "project.clj") \]))]]))
+               @blown)))
+      (testing "after and before with symbol"
+        (bubble {} "blow" "0" (str *nrepl-port*) "bubble-sym"
+                ":after" "after-symbol" ":before" "before-symbol" "project.clj")
+        (is (= (list 'bubble-sym
+                     (cons 'quote
+                           [[(read-string
+                               (str \[ (slurp "project.clj") \]))]])
+                     :before
+                     (list `fn '[through] '((through 'before-symbol)))
+                     :after
+                     (list `fn '[through] '((through 'after-symbol))))
+               @blown))))))
