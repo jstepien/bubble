@@ -1,6 +1,5 @@
 (ns bubble-ring.main
   (:require [bubble.core :as bubble]
-            [clojure.java.io :as io]
             [org.httpkit.server :as http]
             [clojure.tools.nrepl.server :as nrepl]))
 
