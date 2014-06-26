@@ -1,2 +1,2 @@
-(defproject bubble "0.0.0-SNAPSHOT"
+(defproject bubble "0.1.0"
   :dependencies [[org.clojure/clojure "1.5.1"]])
