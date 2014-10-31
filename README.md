@@ -5,6 +5,9 @@ Atomic reloading and disaster recovery included.
 
 [![Build Status](https://travis-ci.org/jstepien/bubble.svg)](https://travis-ci.org/jstepien/bubble)
 
+[![bubble on Clojars](http://clojars.org/bubble/latest-version.svg)](http://clojars.org/bubble)
+[![lein-bubble on Clojars](http://clojars.org/lein-bubble/latest-version.svg)](http://clojars.org/lein-bubble)
+
 ## High-level usage overview
 
 Create a new bubble by calling `bubble.core/init`.
