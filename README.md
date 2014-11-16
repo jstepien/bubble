@@ -5,6 +5,14 @@ Atomic reloading and disaster recovery included.
 
 [![Build Status](https://travis-ci.org/jstepien/bubble.svg)](https://travis-ci.org/jstepien/bubble)
 
+## The Two-And-A-Half-Minute Pitch
+
+Got a minute or two? Check out [the bubbly lightning talk][talk].
+
+[talk]: https://www.youtube.com/watch?v=iY1ofSCn5DM&t=6m4s
+
+## Artifacts
+
 [![bubble on Clojars](http://clojars.org/bubble/latest-version.svg)](http://clojars.org/bubble)
 [![lein-bubble on Clojars](http://clojars.org/lein-bubble/latest-version.svg)](http://clojars.org/lein-bubble)
 
